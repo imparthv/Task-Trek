@@ -219,21 +219,26 @@
             <h5 class="card-header">Task Lists</h5>
             <div class="card-body">
                 <ul class="list-group list-group-flush" id="ul-task-list">
-                    {{#if newTask }}
-                    <li class="list-group-item li-task-list">
+                    {{#if results }}
+                    {{#each results}}
+                    <li class="list-group-item li-task-list" data-id="{{this.task_id}}">
                         {{!-- <h5 class="card-title">{{newTaskObj.project_name}}</h5> --}}
                         <div class="input-group mb-3">
                             <div class="input-group-prepend">
                                 <div class="input-group-text">
                                     <input type="checkbox" aria-label="Checkbox for following text input">
                                 </div>
+
                             </div>
                             <div class="card-body border border-dark rounded ml-2">
-                                {{newTask}}
+                                {{this.task_name}}
                             </div>
                             <button class="btn btn-outline-info ml-1" type="button">Edit Task</button>
                         </div>
                     </li>
+                    {{/each}}
+                    {{else}}
+                    <h5 class="card-title">{{newTask}}</h5>
                     {{/if}}
                 </ul>
 
