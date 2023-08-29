@@ -56,9 +56,20 @@ app.use(express.static(publicDir));
 
 // Index page to be displayed to client upon creating new connection
 app.get("/", async (req, res) => {
-    var newTask = await req.session.newTask;
+    // var newTask = await req.session.newTask;
+    // return res.render("index", { success: true, message: "Track tasks seamlessly...", newTask: newTask });
     if (req.session.loggedin) {
-        return res.render("index", { success: true, message: "Track tasks seamlessly...", newTask: newTask });
+        dbConnection.query("SELECT * FROM tasks WHERE user_id=? ORDER BY task_id DESC LIMIT 5", [req.session.userId], (error, results, fields)=>{
+            if(error) throw error;
+            else if(results.length === 0) {
+                return res.render("index", {success:true, message:"Track tasks seamlessly", newTask:"No tasks are available in record!!!"})
+            }
+            else{
+                return res.render("index", {success:true, message:"Track tasks seamlessly", results});
+            }
+        }
+        )
+        
     } else {
         const message = "Looks like you are not signed in!! Sign in to create and manage the tasks!!"
         res.render("index", { success: false, message: message });
@@ -160,7 +171,7 @@ app.post("/new/task", async (req, res) => {
             });
             dbConnection.query("SELECT * FROM tasks ORDER BY task_id DESC LIMIT 1", async (error, results, fields) => {
                 var task_name = results[0].task_name;
-                req.session.newTask = task_name;
+                // req.session.newTask = task_name;
                 return res.render("index", { success: true, newTaskObj: task_name, message: `Added: ${task_name}` });
             });
         } else {
