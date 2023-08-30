@@ -59,17 +59,17 @@ app.get("/", async (req, res) => {
     // var newTask = await req.session.newTask;
     // return res.render("index", { success: true, message: "Track tasks seamlessly...", newTask: newTask });
     if (req.session.loggedin) {
-        dbConnection.query("SELECT * FROM tasks WHERE user_id=? ORDER BY task_id DESC LIMIT 5", [req.session.userId], (error, results, fields)=>{
-            if(error) throw error;
-            else if(results.length === 0) {
-                return res.render("index", {success:true, message:"Track tasks seamlessly", newTask:"No tasks are available in record!!!"})
+        dbConnection.query("SELECT * FROM tasks WHERE user_id=? ORDER BY task_id DESC LIMIT 5", [req.session.userId], (error, results, fields) => {
+            if (error) throw error;
+            else if (results.length === 0) {
+                return res.render("index", { success: true, message: "Track tasks seamlessly", newTask: "No tasks are available in record!!!" })
             }
-            else{
-                return res.render("index", {success:true, message:"Track tasks seamlessly", results});
+            else {
+                return res.render("index", { success: true, message: "Track tasks seamlessly", results });
             }
         }
         )
-        
+
     } else {
         const message = "Looks like you are not signed in!! Sign in to create and manage the tasks!!"
         res.render("index", { success: false, message: message });
@@ -181,6 +181,13 @@ app.post("/new/task", async (req, res) => {
         return res.render("index", { message: "User must be logged in to create task!!" });
     }
 });
+
+
+// Task Actions
+app.post("/action/task/", (req, res) => {
+    res.send(req.body);
+})
+
 
 // Refreshing the page after sign in
 app.get("/auth/login", (req, res) => {
