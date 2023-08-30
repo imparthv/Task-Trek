@@ -6,6 +6,7 @@ import express from "express";
 import session from "express-session";
 import dotenv from "dotenv";
 import bcrypt from "bcrypt";
+// import bodyParser from "body-parser";
 
 // Specify path to environmental variables
 dotenv.config({ path: "./.env" });
@@ -44,6 +45,7 @@ app.use(session({
 // The json and urlencoded methods will extract the form data from our html file.
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+// app.use(bodyParser);
 
 app.set("view engine", ".hbs");
 
@@ -56,10 +58,8 @@ app.use(express.static(publicDir));
 
 // Index page to be displayed to client upon creating new connection
 app.get("/", async (req, res) => {
-    // var newTask = await req.session.newTask;
-    // return res.render("index", { success: true, message: "Track tasks seamlessly...", newTask: newTask });
     if (req.session.loggedin) {
-        dbConnection.query("SELECT * FROM tasks WHERE user_id=? ORDER BY task_id DESC LIMIT 5", [req.session.userId], (error, results, fields) => {
+        dbConnection.query("SELECT * FROM tasks WHERE user_id=? AND is_completed = false ORDER BY task_id DESC LIMIT 5", [req.session.userId], (error, results, fields) => {
             if (error) throw error;
             else if (results.length === 0) {
                 return res.render("index", { success: true, message: "Track tasks seamlessly", newTask: "No tasks are available in record!!!" })
@@ -73,6 +73,38 @@ app.get("/", async (req, res) => {
     } else {
         const message = "Looks like you are not signed in!! Sign in to create and manage the tasks!!"
         res.render("index", { success: false, message: message });
+    }
+});
+
+// Show active tasks to user
+app.get("/active_tasks", (req, res) => {
+    if (req.session.loggedin) {
+        dbConnection.query("SELECT * FROM tasks WHERE user_id=? AND is_completed = false ORDER BY task_id DESC", [req.session.userId], (error, results, fields) => {
+            if (error) throw error;
+            else if (results.length === 0) {
+                return res.render("active_tasks", { message: `No active tasks are available in record!!! ${req.session.userName}` })
+            }
+            else {
+                return res.render("active_tasks", { success: true, message: "Track tasks seamlessly", results });
+            }
+        }
+        )
+    }
+});
+
+// Show completed tasks to user
+app.get("/completed_tasks", (req, res) => {
+    if (req.session.loggedin) {
+        dbConnection.query("SELECT * FROM tasks WHERE user_id=? AND is_completed = true ORDER BY task_id DESC", [req.session.userId], (error, results, fields) => {
+            if (error) throw error;
+            else if (results.length === 0) {
+                return res.render("active_tasks", { message: `No completed tasks are available in record!!! ${req.session.userName}` })
+            }
+            else {
+                return res.render("active_tasks", { success: true, message: "Track tasks seamlessly", results });
+            }
+        }
+        )
     }
 });
 
@@ -169,10 +201,9 @@ app.post("/new/task", async (req, res) => {
                 if (error) throw error;
                 console.log("Record inserted successfully!!");
             });
-            dbConnection.query("SELECT * FROM tasks ORDER BY task_id DESC LIMIT 1", async (error, results, fields) => {
+            dbConnection.query("SELECT * FROM tasks WHERE user_id=? ORDER BY task_id DESC", [req.session.userId], async (error, results, fields) => {
                 var task_name = results[0].task_name;
-                // req.session.newTask = task_name;
-                return res.render("index", { success: true, newTaskObj: task_name, message: `Added: ${task_name}` });
+                return res.redirect("/");
             });
         } else {
             return res.render("index", { message: "Cannot create an empty task!!" });
@@ -183,9 +214,18 @@ app.post("/new/task", async (req, res) => {
 });
 
 
-// Task Actions
-app.post("/action/task/", (req, res) => {
-    res.send(req.body);
+// Task Actions:- Mark Task as Complete
+app.post("/action/complete/", async (req, res) => {
+    var task_id = await req.body.task_id;
+    dbConnection.query("UPDATE tasks SET is_completed = true WHERE task_id=?", [task_id], (error, results, fields) => {
+        if (error) throw error;
+        else if (results) {
+            res.redirect("/");
+        }
+        else {
+            res.send("Cannot find task in database!!");
+        }
+    })
 })
 
 
