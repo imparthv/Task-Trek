@@ -21,6 +21,7 @@
 
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav mr-auto">
+                    {{#if success}}
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown" role="button"
                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -38,10 +39,11 @@
                             Tasks
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <a class="dropdown-item" href="#">Active Tasks</a>
-                            <a class="dropdown-item" href="#">Completed Tasks</a>
+                            <a class="dropdown-item" href="active_tasks">Active Tasks</a>
+                            <a class="dropdown-item" href="completed_tasks">Completed Tasks</a>
                         </div>
                     </li>
+                    {{/if}}
                 </ul>
 
                 {{#unless success}}
@@ -221,24 +223,25 @@
                 <ul class="list-group list-group-flush" id="ul-task-list">
                     {{#if results }}
                     {{#each results}}
-                    <li class="list-group-item li-task-list" data-id="{{this.task_id}}">
-                        {{!-- <h5 class="card-title">{{newTaskObj.project_name}}</h5> --}}
-                        <div class="input-group mb-3">
-                            <div class="input-group-prepend">
-                                <div class="input-group-text">
-                                    <input type="checkbox" aria-label="Checkbox for following text input">
+                    <form action="/action/complete/" method="post">
+                        <li class="list-group-item">
+                            {{!-- <h5 class="card-title">{{newTaskObj.project_name}}</h5> --}}
+                            <div class="input-group mb-3">
+                                <div class="card-body border border-dark rounded ml-2">
+                                    {{this.task_name}}
                                 </div>
-
                             </div>
-                            <div class="card-body border border-dark rounded ml-2">
-                                {{this.task_name}}
+                            <div class="text-right">
+                                </button>
+                                <input type="hidden" name="task_id" value="{{this.task_id}}">
+                                <button type="submit" class="btn btn-secondary">Mark as complete</button>
                             </div>
-                            <button class="btn btn-outline-info ml-1" type="button">Edit Task</button>
-                        </div>
-                    </li>
+                        </li>
+                    </form>
                     {{/each}}
-                    {{else}}
+                    {{#if newTask}}
                     <h5 class="card-title">{{newTask}}</h5>
+                    {{/if}}
                     {{/if}}
                 </ul>
 
@@ -270,9 +273,8 @@
                     </div>
                 </div>
             </div>
+            {{/if}}
         </div>
-        {{/if}}
-    </div>
 </body>
 {{!-- script to prevent form esubmission --}}
 <script>
