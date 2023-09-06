@@ -223,7 +223,7 @@
                 <ul class="list-group list-group-flush" id="ul-task-list">
                     {{#if results }}
                     {{#each results}}
-                    <form action="/action/complete/" method="post">
+                    <form action="/task/action/" method="post">
                         <li class="list-group-item">
                             {{!-- <h5 class="card-title">{{newTaskObj.project_name}}</h5> --}}
                             <div class="input-group mb-3">
@@ -234,7 +234,11 @@
                             <div class="text-right">
                                 </button>
                                 <input type="hidden" name="task_id" value="{{this.task_id}}">
-                                <button type="submit" class="btn btn-secondary">Mark as complete</button>
+                                <button type="submit" class="btn btn-secondary" value="setComplete" name="submit">Mark
+                                    as
+                                    complete</button>
+                                <button type="submit" class="btn btn-secondary" value="doDelete" name="submit">Delete
+                                    Task</button>
                             </div>
                         </li>
                     </form>
