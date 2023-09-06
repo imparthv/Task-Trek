@@ -215,19 +215,33 @@ app.post("/new/task", async (req, res) => {
 
 
 // Task Actions:- Mark Task as Complete
-app.post("/action/complete/", async (req, res) => {
+app.post("/task/action/", async (req, res) => {
+    var btnValue = await req.body.submit;
     var task_id = await req.body.task_id;
-    dbConnection.query("UPDATE tasks SET is_completed = true WHERE task_id=?", [task_id], (error, results, fields) => {
-        if (error) throw error;
-        else if (results) {
-            res.redirect("/");
-        }
-        else {
-            res.send("Cannot find task in database!!");
-        }
-    })
-})
+    if (btnValue === "setComplete") {
+        dbConnection.query("UPDATE tasks SET is_completed = true WHERE task_id=?", [task_id], (error, results, fields) => {
+            if (error) throw error;
+            else if (results) {
+                res.redirect("/");
+            }
+            else {
+                res.send("Cannot find task in database!!");
+            }
+        });
+    }
+    else if (btnValue === "doDelete") {
+        dbConnection.query("DELETE FROM tasks WHERE task_id=?", [task_id], (error, results, fields) => {
+            if (error) throw error;
+            else if (results) {
+                res.redirect("/");
+            }
+            else {
+                res.send("Cannot find task in database!!");
+            }
+        });
+    }
 
+});
 
 // Refreshing the page after sign in
 app.get("/auth/login", (req, res) => {
