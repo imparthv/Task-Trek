@@ -232,7 +232,6 @@
                                 </div>
                             </div>
                             <div class="text-right">
-                                </button>
                                 <input type="hidden" name="task_id" value="{{this.task_id}}">
                                 <button type="submit" class="btn btn-secondary" value="setComplete" name="submit">Mark
                                     as
@@ -249,7 +248,7 @@
                     {{/if}}
                 </ul>
 
-                {{!-- New Task modal --}}
+                {{!-- New Task Modal --}}
                 <div class="modal fade" id="taskEntryModal" tabindex="-1" aria-labelledby="exampleModalLabel"
                     aria-hidden="true">
                     <div class="modal-dialog">
@@ -277,8 +276,9 @@
                     </div>
                 </div>
             </div>
-            {{/if}}
         </div>
+        {{/if}}
+    </div>
 </body>
 {{!-- script to prevent form esubmission --}}
 <script>
@@ -286,7 +286,7 @@
         window.history.replaceState(null, null, window.location.href);
     }
 </script>
-
+{{!-- <script src="/public/js/script.js"></script> --}}
 {{!-- Bootstrap --}}
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
     integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
